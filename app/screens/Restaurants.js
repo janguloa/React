@@ -1,12 +1,10 @@
 import React from 'react';
-import { View, Text } from 'react-native'
+import { View, Text } from 'react-native';
 
-const Restaurants = () => {
+export default function Restaurants () {
     return (  
         <View>
-            <Tex>Restaurants....</Tex>
+            <Text>Restaurants....</Text>
         </View>
     );
-}
- 
-export default Restaurants;
+};

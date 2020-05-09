@@ -1,12 +1,10 @@
 import React from 'react';
-import { View, Text } from 'react-native'
+import { View, Text } from 'react-native';
 
-const TopRestaurants = () => {
+export default function TopRestaurants() {
     return (  
         <View>
-            <Text> TopRestaurants...</Text>
+            <Text>TopRestaurants....</Text>
         </View>
     );
-}
- 
-export default TopRestaurants;
+};

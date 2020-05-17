@@ -53,7 +53,7 @@ export default function Navigation() {
             <Tab.Screen
             name="account"
             component={AccountStack}
-            options={{title:"Contacto"}}
+            options={{title:"Cuenta"}}
             />
         </Tab.Navigator>
     </NavigationContainer>

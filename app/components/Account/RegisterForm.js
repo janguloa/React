@@ -1,16 +1,49 @@
 import React, {useState} from "react";
 import { StyleSheet, View } from "react-native"
 import { Input, Icon, Button} from "react-native-elements";
+import Loading from "../Loading";
+import { validateEmail } from "../../utils/validation";
+import { size, isEmpty } from "lodash";
+import * as firebase from "firebase";
+import { useNavigation } from "@react-navigation/native";
 
-export default function RegisterForm(){
+export default function RegisterForm(props){
 
+    const {toastRef} = props;
     const [showPassword, setShowPassword] = useState(false);
     const [showPassword1, setShowPassword1] = useState(false);
     const [formData, setFormData] = useState(defaultFormValue());
+    const [loading, setLoading] = useState(false);
+    const navigation = useNavigation();
 
     const onSubmit = () => {
-        console.log(formData);
-    }
+        if(
+            isEmpty(formData.email) || 
+            isEmpty(formData.password) || 
+            isEmpty(formData.repeatPassword)
+        ){
+            toastRef.current.show("Todos los campos son obligatorios");
+        } else if(!validateEmail(formData.email)){
+            toastRef.current.show("El Email no es válido");
+        } else if (formData.password !== formData.repeatPassword){
+            toastRef.current.show("Las contraseñas deben ser iguales");
+        } else if (size(formData.password) < 6){
+            toastRef.current.show("La contraseña debe tener al menos 6 caracteres");
+        } else {
+            setLoading(true);
+            firebase
+            .auth()
+            .createUserWithEmailAndPassword(formData.email, formData.password)
+            .then(response => {
+                setLoading(false);
+                navigation.navigate("account");
+            })
+            .catch(() => {
+                setLoading(false);
+                toastRef.current.show("El email ya esta en uso, por favor intentar con otro");
+            });
+        }
+    };
 
     const onChange = (e, type) => {
       //  console.log(type);
@@ -68,8 +101,9 @@ export default function RegisterForm(){
                 buttonStyle={styles.btnRegister}
                 onPress={onSubmit}
             />
+            <Loading isVisible={loading} text="Creando cuenta" />
         </View>
-    )
+    );
 }
 
 function defaultFormValue(){
@@ -102,4 +136,3 @@ const styles = StyleSheet.create({
         color:"#c1c1c1",
     },
 });
-

@@ -25,6 +25,7 @@
       "supportsTablet": false
     },
     "android": {
+      "permissions": ["CAMERA_ROL"]
 
     }
   }

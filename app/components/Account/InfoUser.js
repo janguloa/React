@@ -17,19 +17,20 @@ export default function InfoUser(props) {
             rounded
             size="large"
             showEditButton
-            source={{
-                uri:
-                'https://s3.amazonaws.com/uifaces/faces/twitter/adhamdannaway/128.jpg',
-            }}
+            source={
+                photoUrl 
+                ? {uri: photoUrl} 
+                : require("../../../assets/img/avatar.jpg")
+            }
             containerStyle={styles.userInfoAvatar}
             showAccessory
          />
          <View>
              <Text style={styles.displayName}>
-                 Jesús Angulo Alvarado
+                {displayName ? displayName : "Anónimo"}
              </Text>
              <Text>
-                 jesus@gmail.com
+                {email ? email : "Social Login"}
              </Text>
          </View>
         </View>

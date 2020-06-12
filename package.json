@@ -13,6 +13,7 @@
     "@react-navigation/native": "^5.1.7",
     "@react-navigation/stack": "^5.2.19",
     "expo": "~37.0.3",
+    "expo-facebook": "~8.1.0",
     "firebase": "^7.9.0",
     "lodash": "^4.17.15",
     "npm-check-updates": "^6.0.1",

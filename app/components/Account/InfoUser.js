@@ -8,7 +8,7 @@ import * as ImagePicker from "expo-image-picker";
 export default function InfoUser(props) {
 
     const { 
-        userInfo: {photoUrl, displayName, email}, 
+        userInfo: { uid, photoUrl, displayName, email}, 
         toastRef
         } = props;
 
@@ -24,9 +24,27 @@ export default function InfoUser(props) {
                 aspect: [4,3]
             })
 
-            console.log(result);
+            if (result.cancelled) {
+                toastRef.current.show("Has cerrado la selección de imágenes");
+            }else{
+                uploadImage(result.uri).then(() => {
+                    console.log("Imagen subida");
+                }).catch(() => {
+                    toastRef.current.show("Error al actualizar el avatar");
+                })
+            }
         }
     };
+
+    const uploadImage = async (uri) => {
+        const response = await fetch(uri);
+        const blob = await response.blob();
+
+        const ref = firebase.storage().ref().child(`avatar/${uid}`);
+        return ref.put(blob);
+
+        //console.log(JSON.stringify(blob));
+    }
 
     return (
         <View style={styles.viewUserInfo}>

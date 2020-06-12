@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { Input, Icon, Button } from "react-native-elements";
-import { isEmpty } from "lodash";
+import { size, isEmpty } from "lodash";
 import { useNavigation } from "@react-navigation/native";
 import * as firebase from "firebase";
 import { validateEmail } from "../../utils/validation";
@@ -19,10 +19,14 @@ export default function LoginForm(props) {
   };
 
   const onSubmit = () => {
-    if (isEmpty(formData.email) || isEmpty(formData.password)) {
-      toastRef.current.show("Todos los campos son obligatorios");
+    if (
+        isEmpty(formData.email) || 
+        isEmpty(formData.password)) {
+        toastRef.current.show("Todos los campos son obligatorios");
     } else if (!validateEmail(formData.email)) {
       toastRef.current.show("El email no es correcto");
+    } else if (size(formData.password) < 6)  {
+      toastRef.current.show("El password tiene que tener al menos 6 caracteres.");
     } else {
       setLoading(true);
       firebase
@@ -69,12 +73,14 @@ export default function LoginForm(props) {
         }
       />
       <Button
+        onPress={onSubmit}
         title="Iniciar sesión"
         containerStyle={styles.btnContainerLogin}
         buttonStyle={styles.btnLogin}
-        onPress={onSubmit}
       />
-      <Loading isVisible={loading} text="Iniciando sesión" />
+      <Loading 
+        isVisible={loading} 
+        text="Iniciando sesión" />
     </View>
   );
 }

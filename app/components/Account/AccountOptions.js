@@ -6,7 +6,13 @@ import { map } from 'lodash';
 export default function AccountOptions(props) {
 
 const { userInfo, toastRef } = props;
-const menuOptions = generateOptions();
+
+const selectedComponent = (key) => {
+    console.log('Click');
+    console.log(key);
+};
+
+const menuOptions = generateOptions(selectedComponent);
 
     return (
         <View>
@@ -14,25 +20,60 @@ const menuOptions = generateOptions();
                 <ListItem 
                     key={index}
                     title={menu.title}
+                    leftIcon={{ 
+                        type: menu.iconType,
+                        name: menu.iconNameLeft,
+                        color: menu.iconColorLeft, 
+                    }}
+                    rightIcon={{
+                        type: menu.iconType,
+                        name: menu.iconNameRight,
+                        color: menu.iconColorRight,
+                    }}
+                    containerStyle={styles.menuItem}
+                    onPress={menu.onPress}
                 />    
             ))}
         </View>
     )
 }
 
-function generateOptions(){
+function generateOptions(selectedComponent){
     return [
         {
-            title: "Cambiar nombres y apellidos"
+            title: "Cambiar nombres y apellidos",
+            iconType: "material-community",
+            iconNameLeft: "account-circle",
+            iconColorLeft: "#ccc",
+            iconNameRight: "chevron-right",
+            iconColorRight: "#ccc",
+            onPress: () => selectedComponent("displayName"),
         },
         {
-            title: "Cambiar email"
+            title: "Cambiar email",
+            iconType: "material-community",
+            iconNameLeft: "at",
+            iconColorLeft: "#ccc",
+            iconNameRight: "chevron-right",
+            iconColorRight: "#ccc",
+            onPress: () => selectedComponent("email"),
         },
         {
-            title: "Cambiar contraseña"
+            title: "Cambiar contraseña",
+            iconType: "material-community",
+            iconNameLeft: "lock-reset",
+            iconColorLeft: "#ccc",
+            iconNameRight: "chevron-right",
+            iconColorRight: "#ccc",
+            onPress: () => selectedComponent("password"),
         },
     ]
 
 };
 
-const styles = StyleSheet.create({}); 
+const styles = StyleSheet.create({
+    menuItem: {
+        borderBottomWidth: 1,
+        borderBottomColor: "#e3e3e3",
+    },
+}); 

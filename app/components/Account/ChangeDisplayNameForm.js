@@ -1,10 +1,22 @@
-import React from "react";
+import React, {useState} from "react";
 import { StyleSheet, View, Text } from "react-native";
 import { Button, Input } from "react-native-elements";
 
 export default function ChangeDisplayNameForm (props) {
-
     const {displayName, setShowModal, toastRef} = props;
+    const [newDisplayName, setNewDisplayName] = useState(null);
+    const [error, setError] = useState(null);
+
+    const onSubmit = () => {
+        setError(null);
+        if(!newDisplayName){
+            setError("El nombre no puede estar vacio");
+        }else if (displayName === newDisplayName){
+            setError("El nombre no puede ser igual al actual");
+        }else {
+            console.log("Ok");
+        }
+    }
 
     return(
         <View styles={styles.view}> 
@@ -17,11 +29,14 @@ export default function ChangeDisplayNameForm (props) {
                     color: "#c2c2c2",
                 }}
                 defaultValue={displayName || ""}
+                onChange={e => setNewDisplayName(e.nativeEvent.text)}
+                errorMessage={error}
             />
             <Button 
                 title="Cambiar nombre"
                 containerStyle={styles.btnContainer}
                 buttonStyle={styles.btn}
+                onPress={onSubmit}
             />
         </View>
     )

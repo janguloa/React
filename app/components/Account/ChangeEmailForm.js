@@ -1,12 +1,13 @@
 import React, {useState} from "react";
 import { StyleSheet, View, Text } from 'react-native';
 import { Button, Input } from "react-native-elements";
+import { validateEmail } from "../../utils/validation";
 
 export default function ChangeEmailForm(props){
 
     const { email, setShowModal, toastRef, setReloadUserInfo} = props;
     const [formData, setFormData] = useState(defaultValue);
-    const [error, setError] = useState(null);
+    const [errors, setErrors] = useState({});
     const [isLoading, setIsLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
 
@@ -15,16 +16,23 @@ export default function ChangeEmailForm(props){
     };
 
     const onSubmit = () => {
+        setErrors({});
 
-        console.log(formData);
-        // setError(null);
-        // if(!formData.email){
-        //     setError("El email no puede estar vacio");
-        // }else if(email === formData.email){
-        //     setError("El email no puede ser igual al anterior");
-        // }else {
-        //     console.log('OK');
-        // }
+         if(!formData.email || email === formData.email){
+             setErrors({
+                 email: "EL email no ha cambiado"
+             });
+         }else if(!validateEmail(formData.email)){
+            setErrors({
+                email: "EL email es incorrecto"
+            });
+         }else if(!formData.password){
+            setErrors({
+                password: "La contraseña no puede estar vacia"
+            });  
+         }else{
+             console.log('OK');
+         }
     }
     
     return(
@@ -38,7 +46,7 @@ export default function ChangeEmailForm(props){
                     color: "#c2c2c2",
                 }}
                 defaultValue={email || ""}
-                errorMessage={error}
+                errorMessage={errors.email}
                 onChange={(e) => {onChange(e,"email")}}
             />
             <Input 
@@ -53,6 +61,7 @@ export default function ChangeEmailForm(props){
                     onPress: () => setShowPassword(!showPassword)
                 }}
                 onChange={(e) => {onChange(e,"password")}}
+                errorMessage={errors.password}
             />
             <Button 
                 title="Cambiar correo"

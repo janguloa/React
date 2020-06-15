@@ -8,6 +8,7 @@ export default function ChangeEmailForm(props){
     const [formData, setFormData] = useState(defaultValue);
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
 
     const onChange = (e, type) => {
         setFormData({...formData, [type]: e.nativeEvent.text});
@@ -44,11 +45,12 @@ export default function ChangeEmailForm(props){
                 placeholder="Contraseña"
                 containerStyle={styles.input}
                 password={true}
-                secureTextEntry={true}
+                secureTextEntry={showPassword ? false: true}
                 rightIcon={{
                     type: "material-community",
-                    name: "eye-outline",
+                    name: showPassword ? "eye-off-outline" : "eye-outline",
                     color: "#c2c2c2",
+                    onPress: () => setShowPassword(!showPassword)
                 }}
                 onChange={(e) => {onChange(e,"password")}}
             />

@@ -5,19 +5,25 @@ import { Button, Input } from "react-native-elements";
 export default function ChangeEmailForm(props){
 
     const { email, setShowModal, toastRef, setReloadUserInfo} = props;
-    const [newEmail, setNewEmail] = useState(null);
+    const [formData, setFormData] = useState(defaultValue);
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
 
+    const onChange = (e, type) => {
+        setFormData({...formData, [type]: e.nativeEvent.text});
+    };
+
     const onSubmit = () => {
-        setError(null);
-        if(!newEmail){
-            setError("El email no puede estar vacio");
-        }else if(email === newEmail){
-            setError("El email no puede ser igual al anterior");
-        }else {
-            console.log('OK');
-        }
+
+        console.log(formData);
+        // setError(null);
+        // if(!formData.email){
+        //     setError("El email no puede estar vacio");
+        // }else if(email === formData.email){
+        //     setError("El email no puede ser igual al anterior");
+        // }else {
+        //     console.log('OK');
+        // }
     }
     
     return(
@@ -32,6 +38,7 @@ export default function ChangeEmailForm(props){
                 }}
                 defaultValue={email || ""}
                 errorMessage={error}
+                onChange={(e) => {onChange(e,"email")}}
             />
             <Input 
                 placeholder="Contraseña"
@@ -43,6 +50,7 @@ export default function ChangeEmailForm(props){
                     name: "eye-outline",
                     color: "#c2c2c2",
                 }}
+                onChange={(e) => {onChange(e,"password")}}
             />
             <Button 
                 title="Cambiar correo"
@@ -52,6 +60,13 @@ export default function ChangeEmailForm(props){
             />
         </View>
     )
+};
+
+function defaultValue(){
+    return {
+        email: "",
+        password: "",
+    }
 };
 
 const styles = StyleSheet.create({

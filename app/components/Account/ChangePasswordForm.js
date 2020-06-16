@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { Button, Input } from "react-native-elements";
+import { size } from "lodash";
 
 export default function ChangePasswordForm(){
 
@@ -8,13 +9,43 @@ export default function ChangePasswordForm(){
     const [showPassword1, setShowPassword1] = useState(false);
     const [showPassword2, setShowPassword2] = useState(false);
     const [formData, setFormData] = useState(defaultValue);
+    const [errors, setErrors] = useState({});
 
     const onChange = (e, type) => {
         setFormData({ ...formData, [type]: e.nativeEvent.text});
     };
 
     const onSubtmit = () => {
-        console.log(formData);
+
+        let errorsTemp = {};
+        setErrors({});
+
+        if(
+            !formData.password || 
+            !formData.newPassword || 
+            !formData.repeatNewPassword)
+        {
+            errorsTemp = {
+                password: !formData.password ? "La contraseña no puede estar vacia" :"",
+                newPassword: !formData.newPassword ? "La contraseña no puede estar vacia" :"",
+                repeatNewPassword: !formData.repeatNewPassword ? "La contraseña no puede estar vacia" :""
+            }
+        }else if (formData.newPassword !== formData.repeatNewPassword){
+            errorsTemp = {
+                newPassword: "Las contraseñas deben ser iguales",
+                repeatNewPassword: "Las contraseñas deben ser iguales"
+            }
+        }else if (size(formData.newPassword) < 6){
+            errorsTemp = {
+                newPassword: "La contraseña tiene que ser mayor a 5 caracteres",
+                repeatNewPassword: "La contraseña tiene que ser mayor a 5 caracteres"
+            }
+        }else{
+            console.log('OK');
+        }
+
+
+        setErrors(errorsTemp);
     };
 
     return (
@@ -31,6 +62,7 @@ export default function ChangePasswordForm(){
                     onPress: () => setShowPassword(!showPassword)
                 }}
                 onChange={(e) => onChange(e, "password")}
+                errorMessage={errors.password}
             />
             <Input 
                 placeholder="Nueva contraseña"
@@ -44,6 +76,7 @@ export default function ChangePasswordForm(){
                     onPress: () => setShowPassword1(!showPassword1)
                 }}
                 onChange={(e) => onChange(e, "newPassword")}
+                errorMessage={errors.newPassword}
             />
             <Input 
                 placeholder="Repetir nueva contraseña"
@@ -57,6 +90,7 @@ export default function ChangePasswordForm(){
                     onPress: () => setShowPassword2(!showPassword2)
                 }}
                 onChange={(e) => onChange(e, "repeatNewPassword")}
+                errorMessage={errors.repeatNewPassword}
             />
             <Button 
                 title="Cambiar contraseña"

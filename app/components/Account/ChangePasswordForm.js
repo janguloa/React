@@ -7,6 +7,15 @@ export default function ChangePasswordForm(){
     const [showPassword, setShowPassword] = useState(false);
     const [showPassword1, setShowPassword1] = useState(false);
     const [showPassword2, setShowPassword2] = useState(false);
+    const [formData, setFormData] = useState(defaultValue);
+
+    const onChange = (e, type) => {
+        setFormData({ ...formData, [type]: e.nativeEvent.text});
+    };
+
+    const onSubtmit = () => {
+        console.log(formData);
+    };
 
     return (
         <View style={styles.view}>
@@ -20,8 +29,8 @@ export default function ChangePasswordForm(){
                     name: showPassword ? "eye-off-outline" : "eye-outline",
                     color: "#c2c2c2",
                     onPress: () => setShowPassword(!showPassword)
-                }
-            }
+                }}
+                onChange={(e) => onChange(e, "password")}
             />
             <Input 
                 placeholder="Nueva contraseña"
@@ -34,6 +43,7 @@ export default function ChangePasswordForm(){
                     color: "#c2c2c2",
                     onPress: () => setShowPassword1(!showPassword1)
                 }}
+                onChange={(e) => onChange(e, "newPassword")}
             />
             <Input 
                 placeholder="Repetir nueva contraseña"
@@ -46,15 +56,25 @@ export default function ChangePasswordForm(){
                     color: "#c2c2c2",
                     onPress: () => setShowPassword2(!showPassword2)
                 }}
+                onChange={(e) => onChange(e, "repeatNewPassword")}
             />
             <Button 
                 title="Cambiar contraseña"
                 containerStyle={styles.btnContainer}
                 buttonStyle={styles.btn}
+                onPress={onSubtmit}
             />
         </View>
     )
 }
+
+function defaultValue(){
+    return {
+        password:"",
+        newPassword: "",
+        repeatNewPassword: ""
+    }
+};
 
 const styles = StyleSheet.create({
     view: {

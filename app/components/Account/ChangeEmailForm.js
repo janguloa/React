@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import { StyleSheet, View, Text } from 'react-native';
 import { Button, Input } from "react-native-elements";
+import * as firebase from "firebase";
 import { validateEmail } from "../../utils/validation";
 import { reauthenticate } from "../../utils/api";
 
@@ -32,12 +33,25 @@ export default function ChangeEmailForm(props){
                 password: "La contraseña no puede estar vacia"
             });  
          }else{
-                reauthenticate(formData.password).then(response => {
-                    console.log(response);
+                setIsLoading(true);
+                reauthenticate(formData.password)
+                .then(() => {
+                    firebase.auth()
+                        .currentUser.updateEmail(formData.email)
+                        .then(() => {
+                            setIsLoading(false);
+                            setReloadUserInfo(true);
+                            toastRef.current.show("Correo actualizado correctamente");
+                            setShowModal(false);
+                        })
+                        .catch(() => {
+                            setErrors({email: "Error al actualizar el correo"});
+                            setIsLoading(false);
+                        })
+
                 }).catch(() => {
-                    setErrors({
-                        password: "La contraseña no es correcta"
-                    });
+                    setIsLoading(false);
+                    setErrors({password: "La contraseña no es correcta"});
                 });
          }
     }

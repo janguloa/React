@@ -2,21 +2,23 @@ import React, {useState} from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { Button, Input } from "react-native-elements";
 import { size } from "lodash";
+import * as firebase from "firebase";
+import { reauthenticate } from "../../utils/api";
 
-export default function ChangePasswordForm(){
+export default function ChangePasswordForm(props){
 
+    const { setShowModal, toastRef} = props;
     const [showPassword, setShowPassword] = useState(false);
-    const [showPassword1, setShowPassword1] = useState(false);
-    const [showPassword2, setShowPassword2] = useState(false);
     const [formData, setFormData] = useState(defaultValue);
     const [errors, setErrors] = useState({});
+    const [isLoading, setIsLoading] = useState(false);
 
     const onChange = (e, type) => {
         setFormData({ ...formData, [type]: e.nativeEvent.text});
     };
 
-    const onSubtmit = () => {
-
+    const onSubtmit = async () => {
+        let isSetError = true;
         let errorsTemp = {};
         setErrors({});
 
@@ -41,11 +43,38 @@ export default function ChangePasswordForm(){
                 repeatNewPassword: "La contraseña tiene que ser mayor a 5 caracteres"
             }
         }else{
-            console.log('OK');
+            setIsLoading(true);
+            await reauthenticate(formData.password)
+                .then(async () => {
+                    await firebase
+                        .auth()
+                        .currentUser.updatePassword(formData.newPassword)
+                        .then(() => {
+                            isSetError= false;
+                            setIsLoading(false);
+                            setShowModal(false);
+                            firebase.auth().signOut();
+                        })
+                        .catch((error) => {
+                         //   console.log(error);
+                            errorsTemp = {
+                                other: "Error al actualizar la contraseña"
+                            };
+                            setIsLoading(false);
+                        });
+                
+                })
+                .catch((err) => {
+              //  console.log(err);
+                errorsTemp = {
+                    password: "La contraseña no es correcta"
+                };
+                setIsLoading(false);
+            });
         }
 
+        isSetError && setErrors(errorsTemp);
 
-        setErrors(errorsTemp);
     };
 
     return (
@@ -68,12 +97,12 @@ export default function ChangePasswordForm(){
                 placeholder="Nueva contraseña"
                 containerStyle={styles.input}
                 password={true}
-                secureTextEntry={showPassword1 ? false: true}
+                secureTextEntry={showPassword ? false: true}
                 rightIcon={{
                     type:"material-community",
-                    name: showPassword1 ? "eye-off-outline" :"eye-outline",
+                    name: showPassword ? "eye-off-outline" :"eye-outline",
                     color: "#c2c2c2",
-                    onPress: () => setShowPassword1(!showPassword1)
+                    onPress: () => setShowPassword(!showPassword)
                 }}
                 onChange={(e) => onChange(e, "newPassword")}
                 errorMessage={errors.newPassword}
@@ -82,12 +111,12 @@ export default function ChangePasswordForm(){
                 placeholder="Repetir nueva contraseña"
                 containerStyle={styles.input}
                 password={true}
-                secureTextEntry={showPassword2 ? false : true}
+                secureTextEntry={showPassword ? false : true}
                 rightIcon={{
                     type:"material-community",
-                    name: showPassword2 ? "eye-off-outline" : "eye-outline",
+                    name: showPassword ? "eye-off-outline" : "eye-outline",
                     color: "#c2c2c2",
-                    onPress: () => setShowPassword2(!showPassword2)
+                    onPress: () => setShowPassword(!showPassword)
                 }}
                 onChange={(e) => onChange(e, "repeatNewPassword")}
                 errorMessage={errors.repeatNewPassword}
@@ -97,7 +126,9 @@ export default function ChangePasswordForm(){
                 containerStyle={styles.btnContainer}
                 buttonStyle={styles.btn}
                 onPress={onSubtmit}
+                loading={isLoading}
             />
+            <Text>{errors.other}</Text>
         </View>
     )
 }

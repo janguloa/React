@@ -10,7 +10,6 @@ export default function Restaurants (props) {
 
     useEffect(() => {
       firebase.auth().onAuthStateChanged((userInfo) => {
-          console.log(userInfo)
           setUser(userInfo);
       })
     }, [])

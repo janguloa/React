@@ -1,18 +1,22 @@
 import React, {useState} from "react";
 import { StyleSheet, View, ScrollView, Alert, Dimensions } from "react-native";
 import { Icon, Avatar, Image, Input, Button } from "react-native-elements";
+import * as Permissions from "expo-permissions";
+import * as ImagePicker from "expo-image-picker";
 
 export default function AddRestaurantsForm (props) {
     const { toastRef,setIsLoading,navigation } = props;
     const [restaurantName, setRestaurantName] = useState("");
     const [restaurantAddress, setRestaurantAddres] = useState("");
     const [restaurantDescription, setRestaurantDescription] = useState("");
+    const [imageSelected, setImageSelected] = useState([]);
     
     const addRestaurant = () => {
         console.log('OK');
         console.log(restaurantName);
         console.log(restaurantAddress);
         console.log(restaurantDescription);
+        console.log(imageSelected);
 
     };
 
@@ -23,7 +27,11 @@ export default function AddRestaurantsForm (props) {
                 setRestaurantAddres={setRestaurantAddres} 
                 setRestaurantDescription={setRestaurantDescription}
                 />
-            <UploadImage />
+            <UploadImage 
+                toastRef={toastRef}
+                setImageSelected={setImageSelected}
+                imageSelected={imageSelected}
+                />
             <Button 
                 title="Crear restaurante"
                 onPress={addRestaurant}
@@ -59,11 +67,37 @@ function FormAdd(props){
     )
 }
 
-function UploadImage(){
+function UploadImage(props){
 
-    const imageSelect = () => {
-        console.log("Imagenes...");
-    }
+    const { toastRef, setImageSelected, imageSelected } = props;
+
+    const imageSelect = async () => {
+
+        const resultPermissions = await Permissions.askAsync(
+            Permissions.CAMERA_ROLL
+        );
+
+        if(resultPermissions === "denied"){
+            toastRef.current.show(
+                "Es necesario aceptar los permisos de la galeria, si los has rechazado tienes que activarlos manualmente", 
+                3000
+            );
+        } else {
+            const result = await ImagePicker.launchImageLibraryAsync({
+                allowsEditing: true,
+                aspect: [4,3]
+            });
+
+            if(result.cancelled) {
+                toastRef.current.show(
+                    "Has cerrado la galeria sin seleccionar ninguna imagen",
+                    2000
+                )
+            } else {
+                setImageSelected([...imageSelected, result.uri]);
+            }
+        }
+    };
 
     return (
         <View style={styles.viewImages}>

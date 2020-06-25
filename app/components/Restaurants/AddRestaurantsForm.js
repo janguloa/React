@@ -1,8 +1,10 @@
 import React, {useState} from "react";
 import { StyleSheet, View, ScrollView, Alert, Dimensions } from "react-native";
 import { Icon, Avatar, Image, Input, Button } from "react-native-elements";
+import { map, size } from "lodash";
 import * as Permissions from "expo-permissions";
 import * as ImagePicker from "expo-image-picker";
+
 
 export default function AddRestaurantsForm (props) {
     const { toastRef,setIsLoading,navigation } = props;
@@ -101,15 +103,24 @@ function UploadImage(props){
 
     return (
         <View style={styles.viewImages}>
+          {size(imageSelected) < 4 && (
             <Icon
-                type="material-community"
-                name="camera"
-                color="#7a7a7a"
-                containerStyle={styles.containerIcon}
-                onPress={imageSelect}
+              type="material-community"
+              name="camera"
+              color="#7a7a7a"
+              containerStyle={styles.containerIcon}
+              onPress={imageSelect}
             />
+          )}
+          {map(imageSelected, (imageRestaurant, index) => (
+            <Avatar
+              key={index}
+              style={styles.miniatureStyle}
+              source={{ uri: imageRestaurant }}
+            />
+          ))}
         </View>
-    )
+      );
 }
 
 const styles = StyleSheet.create({
@@ -147,4 +158,9 @@ const styles = StyleSheet.create({
         width: 70,
         backgroundColor: "#e3e3e3",
     },  
+    miniatureStyle:{
+        width: 70,
+        height: 70,
+        marginRight: 10,
+    },
 });

@@ -1,9 +1,10 @@
-import React, {useState} from "react";
+import React, { useState, useEffect } from "react";
 import { StyleSheet, View, ScrollView, Alert, Dimensions, Text } from "react-native";
 import { Icon, Avatar, Image, Input, Button } from "react-native-elements";
 import { map, size, filter } from "lodash";
 import * as Permissions from "expo-permissions";
 import * as ImagePicker from "expo-image-picker";
+import * as Location from "expo-location";
 import Modal from "../Modal";
 
 const widthScreen = Dimensions.get("window").width;
@@ -18,10 +19,10 @@ export default function AddRestaurantsForm (props) {
     
     const addRestaurant = () => {
         console.log('OK');
-        console.log(restaurantName);
-        console.log(restaurantAddress);
-        console.log(restaurantDescription);
-        console.log(imageSelected);
+     //   console.log(restaurantName);
+     //   console.log(restaurantAddress);
+     //   console.log(restaurantDescription);
+    //    console.log(imageSelected);
 
     };
 
@@ -55,8 +56,6 @@ export default function AddRestaurantsForm (props) {
 
 function ImageRestaurant (props){
     const { ImagenRestaurant } = props;
-
-    console.log(ImagenRestaurant);
 
     return (
         <View style={styles.viewPhoto}> 
@@ -110,6 +109,32 @@ function FormAdd(props){
 
 function Map(props) {
     const { isVisibleMap, setIsVisibleMap } = props;
+    const [locaton, setLocaton] = useState(null);
+
+    useEffect(() => {
+        (async() => {
+            const resultPermission = await Permissions.askAsync(
+                Permissions.LOCATION
+                );
+
+            const statusPermissions = resultPermission.permissions.location.status;
+
+            if (statusPermissions !== "granted") {
+                toastRef.current.show(
+                    "Tienes que aceptar los permisos de localización para crear un restaurante", 
+                    3000
+                );
+            } else {
+                const loc = await Location.getCurrentPositionAsync({});
+                setLocaton({
+                    latitude: loc.coords.latitude,
+                    longitude: loc.coords.longitude,
+                    latitudeDelta: 0.001,
+                    longitudeDelta: 0.0001
+                });
+            }
+        })();
+    }, []);
 
     return (
         <Modal isVisible={isVisibleMap} setIsVisible={setIsVisibleMap}> 

@@ -5,6 +5,7 @@ import { map, size, filter } from "lodash";
 import * as Permissions from "expo-permissions";
 import * as ImagePicker from "expo-image-picker";
 import * as Location from "expo-location";
+import MapView from "react-native-maps";
 import Modal from "../Modal";
 
 const widthScreen = Dimensions.get("window").width;
@@ -109,7 +110,7 @@ function FormAdd(props){
 
 function Map(props) {
     const { isVisibleMap, setIsVisibleMap } = props;
-    const [locaton, setLocaton] = useState(null);
+    const [ location, setLocation ] = useState(null);
 
     useEffect(() => {
         (async() => {
@@ -126,7 +127,7 @@ function Map(props) {
                 );
             } else {
                 const loc = await Location.getCurrentPositionAsync({});
-                setLocaton({
+                setLocation({
                     latitude: loc.coords.latitude,
                     longitude: loc.coords.longitude,
                     latitudeDelta: 0.001,
@@ -138,7 +139,26 @@ function Map(props) {
 
     return (
         <Modal isVisible={isVisibleMap} setIsVisible={setIsVisibleMap}> 
-            <Text>Hola mapa</Text>
+            <View>
+                {location && (
+                    <MapView
+                        style={styles.mapStyle}
+                        initialRegion={location}
+                        showsUserLocation={true}
+                        onRegionChange={(region) => {
+                            setLocation(region)
+                        }}
+                    >
+                        <MapView.Marker
+                            coordinate={{
+                                latitude: location.latitude,
+                                longitude: location.longitude,
+                            }}
+                            draggable
+                        />
+                    </MapView>
+                )}
+            </View>
         </Modal>   
     );
 }
@@ -266,4 +286,8 @@ const styles = StyleSheet.create({
         height: 200, 
         marginBottom: 20,
     },  
+    mapStyle:{
+        width: "100%",
+        height: 550,
+    },
 });

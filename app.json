@@ -25,6 +25,12 @@
       "supportsTablet": false
     },
     "android": {
+      "package": "com.panaupdrade.cincotenedores",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyA9QImr_nqPo2MOWDkREDKupAy6CZRKo0I"
+        }
+      },
       "permissions": [
         "CAMERA_ROL",
         "READ_EXTERNAL_STORAGE",
@@ -33,7 +39,6 @@
         "ACCESS_COARSE_LOCATION",
         "ACCESS_FINE_LOCATION"
       ]
-
     }
   }
 }

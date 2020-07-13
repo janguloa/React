@@ -12,7 +12,7 @@ import {size} from "lodash";
 
 export default function ListRestaurants(props) {
 
-    const { restaurants } = props;
+    const { restaurants, handleLoadMore, isLoading} = props;
 
     return (
         <View>
@@ -20,8 +20,13 @@ export default function ListRestaurants(props) {
             {size(restaurants) > 0 ? (
                 <FlatList
                     data={restaurants}
-                    renderItem={(restaurant) => <Restaurant restaurant={restaurant} />}
+                    renderItem={(restaurant) => 
+                        <Restaurant restaurant={restaurant} />
+                    }
                     keyExtractor={(item, index) => index.toString()}
+                    onEndReachedThreshold={0.5}
+                    onEndReached={handleLoadMore}
+                    ListFooterComponent={<FooterList isLoading={isLoading} />}
                 />
             ) : (
                 <View style={styles.loaderRestaurant}> 
@@ -73,7 +78,25 @@ function Restaurant(props) {
                 </View>
             </View>
         </TouchableOpacity>
-    )
+    );
+}
+
+function FooterList(props) {
+    const { isLoading } = props;
+
+    if (isLoading) {
+        return (
+            <View style={styles.loaderRestaurant}>
+                <ActivityIndicator size="large" />
+            </View>
+        )
+    } else {
+        return (
+            <View style={styles.notFoundRestaurants}>
+                <Text>No quedan restaurantes por cargar</Text>
+            </View>
+        );
+    }
 }
 
 const styles = StyleSheet.create({
@@ -104,5 +127,10 @@ const styles = StyleSheet.create({
         paddingTop: 2,
         color: "grey",
         width: 300,
+    },
+    notFoundRestaurants: {
+        marginTop: 10,
+        marginBottom: 20,
+        alignItems: "center",
     },
 })

@@ -11,10 +11,13 @@ const db = firebase.firestore(firebaseApp);
 export default function Restaurants (props) {
     const [user, setUser] = useState(null);
     const { navigation } = props;
-    const [restaurants, setRestaurant] = useState([]);
+    const [restaurants, setRestaurants] = useState([]);
     const [totalRestaurants, setTotalRestaurants] = useState(0);
-    const [startRestaurants, setStartRestaurants] = useState( );
-    const limitRestaurants = 10;
+    const [startRestaurants, setStartRestaurants] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
+
+
+    const limitRestaurants = 3;
 
     useEffect(() => {
       firebase.auth().onAuthStateChanged((userInfo) => {
@@ -44,10 +47,38 @@ export default function Restaurants (props) {
                     resultRestaurants.push(restaurant);
                 });
 
-                setRestaurant(resultRestaurants);
+                setRestaurants(resultRestaurants);
 
             });
     }, []);
+
+    const handleLoadMore = () => {
+        const resultRestaurants = [];
+
+        restaurant.length < totalRestaurants && setIsLoading(true);
+
+        db.collection("restaurants")
+            .orderBy("createAt", "desc")
+            .startAfter(startRestaurants.data().createAt)
+            .limit(limitRestaurants)
+            .get()
+            .then((response) => {
+                if(response.docs.length > 0){
+                    setStartRestaurants(response.docs[response.docs.length - 1]);
+                }else{
+                    setIsLoading(false);
+                }
+
+                response.forEach((doc)=>{
+                    const restaurant = doc.data();
+                    restaurant.id = doc.id;
+                    resultRestaurants.push({restaurant});
+                });
+
+                setRestaurants(...[restaurant], ...[resultRestaurants]);
+                
+            });
+    };
 
     return (  
         <View style={styles.viewBody}>

@@ -3,16 +3,52 @@ import { StyleSheet, View, Text } from "react-native";
 import { Icon } from "react-native-elements";
 import { firebaseApp } from "../../utils/firebase";
 import firebase from "firebase/app";
+import "firebase/firestore";
+
+const db = firebase.firestore(firebaseApp);
 
 export default function Restaurants (props) {
     const [user, setUser] = useState(null);
     const { navigation } = props;
+    const [restaurants, setRestaurant] = useState([]);
+    const [totalRestaurants, setTotalRestaurants] = useState(0);
+    const [startRestaurants, setStartRestaurants] = useState( );
+    const limitRestaurants = 10;
+
+    console.log(restaurants);
 
     useEffect(() => {
       firebase.auth().onAuthStateChanged((userInfo) => {
           setUser(userInfo);
       })
-    }, [])
+    }, []);
+
+    useEffect(() => {
+        db.collection("restaurants")
+            .get()
+            .then((snap) => {
+                setTotalRestaurants(snap.size);
+        });
+
+        const resultRestaurants = [];
+
+        db.collection("restaurants")
+            .orderBy("createAt", "desc")
+            .limit(limitRestaurants)
+            .get()
+            .then((response) => {
+                setStartRestaurants(response.docs[response.docs.length -1]);
+
+                response.forEach((doc) => {
+                    const restaurant = doc.data();
+                    restaurant.id  = doc.id;
+                    resultRestaurants.push(restaurant);
+                });
+
+                setRestaurant(resultRestaurants);
+
+            });
+    }, []);
 
     return (  
         <View style={styles.viewBody}>

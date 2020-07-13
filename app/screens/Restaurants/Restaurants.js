@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { StyleSheet, View, Text } from "react-native";
 import { Icon } from "react-native-elements";
+import { useFocusEffect } from '@react-navigation/native';
 import { firebaseApp } from "../../utils/firebase";
 import firebase from "firebase/app";
 import "firebase/firestore";
@@ -25,8 +26,9 @@ export default function Restaurants (props) {
       })
     }, []);
 
-    useEffect(() => {
-        db.collection("restaurants")
+    useFocusEffect(
+        useCallback(() => {
+            db.collection("restaurants")
             .get()
             .then((snap) => {
                 setTotalRestaurants(snap.size);
@@ -50,7 +52,8 @@ export default function Restaurants (props) {
                 setRestaurants(resultRestaurants);
 
             });
-    }, []);
+        }, [])
+    );
 
     const handleLoadMore = () => {
         const resultRestaurants = [];

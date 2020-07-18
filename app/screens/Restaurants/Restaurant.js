@@ -6,6 +6,7 @@ import firebase from "firebase/app";
 import "firebase/firestore";
 import Loading from "../../components/Loading";
 import Carousel from "../../components/Carousel";
+import Map from "../../components/Map";
 
 const db = firebase.firestore(firebaseApp);
 const screenWidth = Dimensions.get("window").width;
@@ -45,6 +46,11 @@ export default function Restaurant(props) {
                 description={restaurant.description}
                 rating={restaurant.rating}
             />
+            <RestaurantInfo 
+                location={restaurant.location}
+                name={restaurant.name}
+                address={restaurant.address}
+            />
         </ScrollView>
         
     )
@@ -69,6 +75,24 @@ function TitleRestauran(props) {
     )
 }
 
+function RestaurantInfo (props){
+    const { location, name, address } = props;
+
+    return (
+        <View style={styles.viewRestaurantInfo}>
+            <Text style={styles.restaurantInfoTitle}>
+                Información sobre restaurante
+            </Text>
+            <Map
+                location={location}
+                name={name}
+                height={100}
+            />
+        </View>
+    )
+}
+
+
 const styles = StyleSheet.create({
     viewBody:{
         flex: 1,
@@ -88,5 +112,14 @@ const styles = StyleSheet.create({
     rating: {
         position: "absolute",
         right: 0,
+    },
+    viewRestaurantInfo: {
+        margin: 15,
+        marginTop: 25, 
+    },
+    restaurantInfoTitle: {
+        fontSize: 20,
+        fontWeight: "bold",
+        marginBottom: 10,
     },
 });

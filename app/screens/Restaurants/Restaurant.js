@@ -8,6 +8,7 @@ import "firebase/firestore";
 import Loading from "../../components/Loading";
 import Carousel from "../../components/Carousel";
 import Map from "../../components/Map";
+import ListReview from "../../components/Restaurants/ListReviews";
 
 const db = firebase.firestore(firebaseApp);
 const screenWidth = Dimensions.get("window").width;
@@ -51,6 +52,11 @@ export default function Restaurant(props) {
                 location={restaurant.location}
                 name={restaurant.name}
                 address={restaurant.address}
+            />
+            <ListReview
+                navigation={navigation}
+                idRestaurant={restaurant.id}
+                setRating={setRating}  
             />
         </ScrollView>
         
@@ -125,7 +131,6 @@ function RestaurantInfo (props){
         </View>
     )
 }
-
 
 const styles = StyleSheet.create({
     viewBody:{

@@ -46,7 +46,7 @@ export default function Restaurant(props) {
                 height={270}
                 width={screenWidth}
             />
-            <TitleRestauran
+            <TitleRestaurant
                 name={restaurant.name}
                 description={restaurant.description}
                 rating={restaurant.rating}
@@ -58,15 +58,14 @@ export default function Restaurant(props) {
             />
             <ListReview
                 navigation={navigation}
-                idRestaurant={restaurant.id}
-                setRating={setRating}  
+                idRestaurant={restaurant.id} 
             />
         </ScrollView>
         
     )
 }
 
-function TitleRestauran(props) {
+function TitleRestaurant(props) {
     const { name, description, rating } = props;
 
     return (

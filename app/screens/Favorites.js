@@ -132,11 +132,36 @@ function UserNoLogged(props){
 
 function Restaurant (props) {
     const { restaurant } = props;
-    const { name } = restaurant.item;
+    const { name, images } = restaurant.item;
 
     return(
-        <View>
-            <Text>{name}</Text>
+        <View style={styles.restaurant}>
+            <TouchableOpacity
+                onPress={() => console.log('OK')}    
+            >
+                <Image 
+                    resizeMode="cover" 
+                    style={styles.image}
+                    PlaceholderContent={<ActivityIndicator color="#fff" />}
+                    source={
+                        images [0]
+                        ? { uri: images[0]}
+                        : require("../../assets/img/no_found.png")
+                    }
+                />
+                <View style={styles.info}>
+                    <Text style={styles.name}>{name}</Text>
+                    <Icon 
+                        type="material-community"
+                        name="heart"
+                        color="#f00"
+                        containerStyle={styles.favorite}
+                        onPress={() => console.log("remove")}
+                        size={35}
+                        underlayColor="transparent"
+                    />
+                </View>
+            </TouchableOpacity>
         </View>
     )
 }
@@ -149,5 +174,33 @@ const styles = StyleSheet.create({
     loaderRestaurants: {
         marginTop: 10,
         marginBottom: 10,
+    },
+    restaurant: {
+        margin: 10,
+    },
+    image: {
+        width: "100%",
+        height: 180
+    },
+    info: {
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "space-between",
+        flexDirection: "row",
+        paddingLeft: 20,
+        paddingTop: 10,
+        paddingBottom: 10,
+        marginTop: -30,
+        backgroundColor: "#fff",
+    },
+    name: {
+        fontWeight: "bold",
+        fontSize: 30,
+    },
+    favorite : {
+        marginTop: -35,
+        backgroundColor: "#fff",
+        padding: 15,
+        borderRadius: 100,
     },
 })

@@ -203,7 +203,8 @@ function Restaurant (props) {
                 onPress={() => 
                     navigation.navigate("restaurants", 
                     { screen: "restaurant", 
-                    params: {id}})}    
+                    params: {id, name}
+                })}    
             >
                 <Image 
                     resizeMode="cover" 
